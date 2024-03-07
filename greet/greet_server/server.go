@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"strconv"
+	"time"
 
 	"google.golang.org/grpc"
 )
@@ -15,15 +17,28 @@ type server struct {
 }
 
 func (*server) Greet(ctx context.Context, req *greetpb.GreetingRequest) (*greetpb.GreetingResponse, error) {
-	fmt.Printf("Greet function is implemented with %v",req);
+	fmt.Printf("Greet function is implemented with %v", req)
 	firstName := req.GetGreeting().GetFirstName()
 	r := "Hello " + firstName
 	res := &greetpb.GreetingResponse{
-		Result : r,
+		Result: r,
 	}
 	return res, nil
 }
+func (*server) GreetManyTimes(req *greetpb.GreetManyTimesRequest, stream greetpb.GreetService_GreetManyTimesServer) error {
+	fmt.Println("GreetManyTimes invoked many times.....")
+	firstName := req.GetGreeting().GetFirstName()
 
+	for i := 1; i < 10; i++ {
+		temp := "Hello " + firstName + " " + " " + strconv.Itoa(i)
+		res := &greetpb.GreetManyTimesResponse{
+			Result: temp,
+		}
+		stream.Send(res)
+		time.Sleep(time.Second)
+	}
+	return nil
+}
 func main() {
 	fmt.Println("server")
 
