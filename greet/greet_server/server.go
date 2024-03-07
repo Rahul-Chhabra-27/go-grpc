@@ -22,7 +22,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to listen %v", err)
 	}
-	// cresating a new grpc server..
+	// creating a new grpc server..
 	grpcServer := grpc.NewServer()
 	// registering the new service...
 	greetpb.RegisterGreetServiceServer(grpcServer, &server{})
