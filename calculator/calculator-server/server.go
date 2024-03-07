@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"time"
 
 	"google.golang.org/grpc"
 )
@@ -15,9 +16,20 @@ type server struct {
 }
 
 func (*server) PrimeNumberDecomposition(request *calculatorpb.PrimeNumberDecompositionRequest, stream calculatorpb.Calculator_PrimeNumberDecompositionServer) error {
-	fmt.Println("Recieved PrimeNumberDecomposition %v\n", request)
-	//number := request.GetNumber();
-
+	fmt.Printf("Recieved PrimeNumberDecomposition %v\n", request)
+	number := request.GetNumber()
+	divisor := 2
+	for number > 1 {
+		if number%int64(divisor) == 0 {
+			stream.Send(&calculatorpb.PrimeNumberDecompositionResponse{
+				PrimeFactor: int64(divisor),
+			})
+			time.Sleep(time.Second)
+			number /= int64(divisor)
+		} else {
+			divisor++
+		}
+	}
 	return nil
 }
 
