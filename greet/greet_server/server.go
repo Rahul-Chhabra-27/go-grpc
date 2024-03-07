@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"desktop/GRPC_PROJECT/Desktop/grpc-project/greet/greetpb"
 	"fmt"
 	"log"
@@ -11,6 +12,16 @@ import (
 
 type server struct {
 	greetpb.UnimplementedGreetServiceServer
+}
+
+func (*server) Greet(ctx context.Context, req *greetpb.GreetingRequest) (*greetpb.GreetingResponse, error) {
+	fmt.Printf("Greet function is implemented with %v",req);
+	firstName := req.GetGreeting().GetFirstName()
+	r := "Hello " + firstName
+	res := &greetpb.GreetingResponse{
+		Result : r,
+	}
+	return res, nil
 }
 
 func main() {
